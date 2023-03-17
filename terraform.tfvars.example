@@ -1,4 +1,6 @@
 confluent_cloud_api_key="cloud-api-key"
 confluent_cloud_api_secret="cloud-api-secret"
+output_topic = "stocks"
+schema_package = "ADVANCED"
 
 

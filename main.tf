@@ -19,9 +19,9 @@ resource "confluent_environment" "staging" {
 # Stream Governance and Kafka clusters can be in different regions as well as different cloud providers,
 # but you should to place both in the same cloud and region to restrict the fault isolation boundary.
 data "confluent_schema_registry_region" "essentials" {
-  cloud   = "AWS"
-  region  = "us-east-2"
-  package = "ESSENTIALS"
+  cloud        = "GCP"
+  region       = "us-central1"
+  package = var.schema_package
 }
 
 resource "confluent_schema_registry_cluster" "essentials" {
@@ -42,15 +42,15 @@ resource "confluent_schema_registry_cluster" "essentials" {
 resource "confluent_kafka_cluster" "basic" {
   display_name = "inventory"
   availability = "SINGLE_ZONE"
-  cloud        = "AWS"
-  region       = "us-east-2"
+  cloud        = "GCP"
+  region       = "us-central1"
   basic {}
   environment {
     id = confluent_environment.staging.id
   }
 }
 
-// 'app-manager' service account is required in this configuration to create 'orders' topic and grant ACLs
+// 'app-manager' service account is required in this configuration to create 'stocks' topic and grant ACLs
 // to 'app-producer' and 'app-consumer' service accounts.
 resource "confluent_service_account" "app-manager" {
   display_name = "app-manager"
@@ -94,11 +94,11 @@ resource "confluent_api_key" "app-manager-kafka-api-key" {
   ]
 }
 
-resource "confluent_kafka_topic" "orders" {
+resource "confluent_kafka_topic" "stocks" {
   kafka_cluster {
     id = confluent_kafka_cluster.basic.id
   }
-  topic_name    = "orders"
+  topic_name    = var.output_topic
   rest_endpoint = confluent_kafka_cluster.basic.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
@@ -108,7 +108,7 @@ resource "confluent_kafka_topic" "orders" {
 
 resource "confluent_service_account" "app-consumer" {
   display_name = "app-consumer"
-  description  = "Service account to consume from 'orders' topic of 'inventory' Kafka cluster"
+  description  = "Service account to consume from 'stocks' topic of 'inventory' Kafka cluster"
 }
 
 resource "confluent_api_key" "app-consumer-kafka-api-key" {
@@ -136,7 +136,7 @@ resource "confluent_kafka_acl" "app-producer-write-on-topic" {
     id = confluent_kafka_cluster.basic.id
   }
   resource_type = "TOPIC"
-  resource_name = confluent_kafka_topic.orders.topic_name
+  resource_name = confluent_kafka_topic.stocks.topic_name
   pattern_type  = "LITERAL"
   principal     = "User:${confluent_service_account.app-producer.id}"
   host          = "*"
@@ -151,7 +151,7 @@ resource "confluent_kafka_acl" "app-producer-write-on-topic" {
 
 resource "confluent_service_account" "app-producer" {
   display_name = "app-producer"
-  description  = "Service account to produce to 'orders' topic of 'inventory' Kafka cluster"
+  description  = "Service account to produce to 'stocks' topic of 'inventory' Kafka cluster"
 }
 
 resource "confluent_api_key" "app-producer-kafka-api-key" {
@@ -183,7 +183,7 @@ resource "confluent_kafka_acl" "app-consumer-read-on-topic" {
     id = confluent_kafka_cluster.basic.id
   }
   resource_type = "TOPIC"
-  resource_name = confluent_kafka_topic.orders.topic_name
+  resource_name = confluent_kafka_topic.stocks.topic_name
   pattern_type  = "LITERAL"
   principal     = "User:${confluent_service_account.app-consumer.id}"
   host          = "*"
