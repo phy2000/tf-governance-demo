@@ -2,10 +2,22 @@
 
 https://github.com/confluentinc/terraform-provider-confluent
 
-
+## Getting Started
+* Copy terraform.tfvars.template to terraform.tfvars
+* Edit the new file and add a Cloud API key to the tfvars with OrgAdmin rolebinding
+* Build the kafka cluster, ksql cluster, and connectors
+  * ```terraform apply```
+* Create the ```ksql-migrations.properties``` file
+  * ```terraform output -raw ksql-properties > ksql-governance-demo/ksql-migrations.properties```
+* Initialize ksql-migrations
+  *  ```ksql-migrations new-project ksql-governance-demo <ksql-endpoint>```
+* Setup the ksql-migrations metadata
+  *  ```ksql-migrations -c ksql-governance-demo/ksql-migrations.properties initialize-metadata```
 
 ## References
 ### KSQL Migrations 
+[ksql-migrations tool](https://docs.ksqldb.io/en/latest/operate-and-deploy/migrations-tool)
+
 The ksql-migrations tool supports migrations files containing the following types of ksqlDB statements:
 
 #### Subcommands

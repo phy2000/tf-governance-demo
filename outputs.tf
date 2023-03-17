@@ -52,3 +52,26 @@ output "resource-ids" {
 
   sensitive = true
 }
+
+output "ksql-properties" {
+  value = <<-EOT
+ksql.server.url=${confluent_ksql_cluster.main.rest_endpoint}
+# Migrations metadata configs:
+# ksql.migrations.stream.name=MIGRATION_EVENTS
+# ksql.migrations.table.name=MIGRATION_SCHEMA_VERSIONS
+# ksql.migrations.stream.topic.name=ksql-service-idksql_MIGRATION_EVENTS
+# ksql.migrations.table.topic.name=ksql-service-idksql_MIGRATION_SCHEMA_VERSIONS  ksql.migrations.topic.replicas=3
+# Migrations metadata configs:
+# ksql.migrations.stream.name=MIGRATION_EVENTS
+# ksql.migrations.table.name=MIGRATION_SCHEMA_VERSIONS
+# ksql.migrations.stream.topic.name=ksql-service-idksql_MIGRATION_EVENTS
+# ksql.migrations.table.topic.name=ksql-service-idksql_MIGRATION_SCHEMA_VERSIONS
+ssl.alpn=true
+# ksqlDB server authentication configs:
+ksql.auth.basic.username=${confluent_api_key.app-ksqldb-api-key.id}
+ksql.auth.basic.password=${confluent_api_key.app-ksqldb-api-key.secret}
+
+EOT
+
+  sensitive = true
+}
