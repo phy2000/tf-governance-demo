@@ -30,3 +30,6 @@ bin/
 # to change depending on the environment.
 #
 *.tfvars
+
+# No properties files, only templates
+*.properties
