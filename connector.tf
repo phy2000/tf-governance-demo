@@ -92,7 +92,7 @@ resource "confluent_connector" "source" {
   // https://docs.confluent.io/cloud/current/connectors/cc-datagen-source.html#configuration-properties
   config_nonsensitive = {
     "connector.class"          = "DatagenSource"
-    "name"                     = "DatagenSourceConnector_0"
+    "name"                     = "StockSourceConnector"
     "kafka.auth.mode"          = "SERVICE_ACCOUNT"
     "kafka.service.account.id" = confluent_service_account.app-connector.id
     "kafka.topic"              = confluent_kafka_topic.stocks.topic_name

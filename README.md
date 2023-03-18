@@ -1,24 +1,49 @@
 # Terraform Streaming Governance Demo
 
-https://github.com/confluentinc/terraform-provider-confluent
+
+
+## Introduction
+This repository deploys a Confluent Cloud cluster with a Datagen source connector and ksqlDB queries to create an example dataflow for Confluent's [Stream Governance Tutorial](https://docs.confluent.io/cloud/current/stream-governance/stream-lineage.html#tutorial)
+
+We use Confluent's 
+[terraform provider](https://github.com/confluentinc/terraform-provider-confluent) 
+to deploy these components on the Confluent Cloud:
+
+* Kafka cluster
+* Kafka connect and Datagen source connector
+* ksqlDB cluster
+
+We use the
+[```ksql-migrations```](https://docs.ksqldb.io/en/latest/operate-and-deploy/migrations-tool)
+tool to deploy the queries which create the dataflow described in the tutorial. 
 
 ## Getting Started
-* Copy terraform.tfvars.template to terraform.tfvars
-* Edit the new file and add a Cloud API key to the tfvars with OrgAdmin rolebinding
+
+Clone the repository, initialize terraform, and initialize the terraform variables
+```
+git clone https://github.com/phy2000/tf-governance-demo tf-governance-demo
+cd tf-governance-demo
+terraform init
+cp terraform.tfvars.template terraform.tfvars
+```
+* Edit ```terraform.tfvars``` and add a Cloud API key and secret with OrgAdmin rolebinding
+  * You may also use one of the alternate variable assignment methods described [here](https://developer.hashicorp.com/terraform/language/values/variables#assigning-values-to-root-module-variables).
+
 * Build the kafka cluster, ksql cluster, and connectors
   * ```terraform apply```
 * Create the ```ksql-migrations.properties``` file
   * ```terraform output -raw ksql-properties > ksql-governance-demo/ksql-migrations.properties```
 * Initialize ksql-migrations
-  *  ```ksql-migrations new-project ksql-governance-demo <ksql-endpoint>```
+  *  No need to run ```ksql-migrations new-project```
+  * The properties file and project subdirectories are created already.
 * Setup the ksql-migrations metadata
   *  ```ksql-migrations -c ksql-governance-demo/ksql-migrations.properties initialize-metadata```
+* Create the streams for the tutorial
+  * ```ksql-migrations -c ksql-governance-demo/ksql-migrations.properties apply -v 1```
 
 ## References
 ### KSQL Migrations 
 [ksql-migrations tool](https://docs.ksqldb.io/en/latest/operate-and-deploy/migrations-tool)
-
-The ksql-migrations tool supports migrations files containing the following types of ksqlDB statements:
 
 #### Subcommands
 ```
@@ -40,8 +65,13 @@ command.
 
 
 ### Links
-[Sample Project for Confluent Terraform Provider](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/guides/sample-project)
 
-[Stream Governance Tutorial](https://docs.confluent.io/cloud/current/stream-governance/stream-lineage.html#tutorial)
+* [Confluent Terraform Provider with examples](https://github.com/confluentinc/terraform-provider-confluent)
 
-[ksql-migrations tool](https://docs.ksqldb.io/en/latest/operate-and-deploy/migrations-tool)
+* [Sample Project for Confluent Terraform Provider](https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/guides/sample-project)
+
+* [Stream Governance Tutorial](https://docs.confluent.io/cloud/current/stream-governance/stream-lineage.html#tutorial)
+
+* [ksql-migrations tool](https://docs.ksqldb.io/en/latest/operate-and-deploy/migrations-tool)
+
+* [Terraform Sensitive Output](https://support.hashicorp.com/hc/en-us/articles/5175257151891-How-to-output-sensitive-data-with-Terraform)
