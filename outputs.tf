@@ -35,24 +35,8 @@ output "resource-ids" {
 output "ksql-properties" {
   value=<<-EOT
 ksql.server.url=${confluent_ksql_cluster.main.rest_endpoint}
-# Migrations metadata configs:
-# ksql.migrations.stream.name=MIGRATION_EVENTS
-# ksql.migrations.table.name=MIGRATION_SCHEMA_VERSIONS
-# ksql.migrations.stream.topic.name=ksql-service-idksql_MIGRATION_EVENTS
-# ksql.migrations.table.topic.name=ksql-service-idksql_MIGRATION_SCHEMA_VERSIONS
 ksql.migrations.topic.replicas=3
-
-# TLS configs:
-# ssl.truststore.location=
-# ssl.truststore.password=
-# ssl.keystore.location=
-# ssl.keystore.password=
-# ssl.key.password=
-# ssl.key.alias=
 ssl.alpn=true
-# ssl.verify.host=true
-
-# ksqlDB server authentication configs:
 ksql.auth.basic.username=${confluent_api_key.app-ksqldb-api-key.id}
 ksql.auth.basic.password=${confluent_api_key.app-ksqldb-api-key.secret}
 
