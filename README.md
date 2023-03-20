@@ -51,7 +51,7 @@ cp terraform.tfvars.template terraform.tfvars
 # Create the cloud cluster and start generating data:
 scripts/01-Terraform-apply.sh
 
-# Generate configuration files for KSQL and consumer scripts
+# Generate ksql-governance-demo/ksql-migrations.properties and scripts/env.vars
 scripts/02-Terraform-output.sh
 ```
 

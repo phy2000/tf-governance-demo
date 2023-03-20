@@ -39,7 +39,9 @@ fi
 echo SUCCESS!
 
 cat <<EOF
-The output files have been created
+These output files have been created:
+  - ksql-governance-demo/ksql-migrations.properties
+  - scripts/env.vars
 
 Next Steps:
 1) Initialize ksql migrations:
