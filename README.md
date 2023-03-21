@@ -75,7 +75,7 @@ scripts/runconsumer.sh sell
 ``` 
 git clone https://github.com/confluentinc/jmx-monitoring-stacks $DESTDIR
 cp scripts/env_variables.env $DESTDIR/ccloud-prometheus-grafana/utils/env_variables.env
-$DESTDIR/jmx-monitoring-stacks/ccloud-prometheus-grafana/start.sh
+$DESTDIR/ccloud-prometheus-grafana/start.sh
 ```
 ---
 ## Links
