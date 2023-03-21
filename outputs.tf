@@ -1,37 +1,4 @@
-output "resource-ids" {
-  value=<<-EOT
-  Environment ID:   ${confluent_environment.staging.id}
-  Kafka Cluster ID: ${confluent_kafka_cluster.demo.id}
-  Kafka topic name: ${confluent_kafka_topic.stocks.topic_name}
-
-  Service Accounts and their Kafka API Keys (API Keys inherit the permissions granted to the owner):
-  ${confluent_service_account.app-manager.display_name}:                     "${confluent_service_account.app-manager.id}"
-  ${confluent_service_account.app-manager.display_name}'s Kafka API Key:     "${confluent_api_key.app-manager-kafka-api-key.id}"
-  ${confluent_service_account.app-manager.display_name}'s Kafka API Secret:  "${confluent_api_key.app-manager-kafka-api-key.secret}"
-
-  ${confluent_service_account.app-producer.display_name}:                    ${confluent_service_account.app-producer.id}
-  ${confluent_service_account.app-producer.display_name}'s Kafka API Key:    "${confluent_api_key.app-producer-kafka-api-key.id}"
-  ${confluent_service_account.app-producer.display_name}'s Kafka API Secret: "${confluent_api_key.app-producer-kafka-api-key.secret}"
-
-  ${confluent_service_account.app-consumer.display_name}:                    ${confluent_service_account.app-consumer.id}
-  ${confluent_service_account.app-consumer.display_name}'s Kafka API Key:    "${confluent_api_key.app-consumer-kafka-api-key.id}"
-  ${confluent_service_account.app-consumer.display_name}'s Kafka API Secret: "${confluent_api_key.app-consumer-kafka-api-key.secret}"
-
-
-# ksqlDB Outputs
-  ksqlDB Cluster ID:                    ${confluent_ksql_cluster.main.id}
-  ksqlDB Cluster API Endpoint:          ${confluent_ksql_cluster.main.rest_endpoint}
-  KSQL Service Account ID:              ${confluent_service_account.app-ksql.id}
-  KSQL API Key:                         ${confluent_api_key.app-ksqldb-api-key.id}
-  KSQL API Secret:                      ${confluent_api_key.app-ksqldb-api-key.secret}
-
-
-
-  EOT
-
-  sensitive=true
-}
-
+# Contents of ksql-governance-demo/ksql-migrations.properties
 output "ksql-properties" {
   value=<<-EOT
 ksql.server.url=${confluent_ksql_cluster.main.rest_endpoint}
@@ -45,6 +12,7 @@ EOT
   sensitive=true
 }
 
+# Contents of scripts/env.vars
 output "tf-env" {
   value=<<-EOT
 # Environment variables
@@ -59,6 +27,7 @@ KSQL_ACCT_ID="${confluent_service_account.app-ksql.id}"
 KSQL_KEY="${confluent_api_key.app-ksqldb-api-key.id}"
 KSQL_SECRET="${confluent_api_key.app-ksqldb-api-key.secret}"
 
+SR_CLUSTER_ID="${confluent_schema_registry_cluster.demo.id}"
 SR_ENDPT="${confluent_schema_registry_cluster.demo.rest_endpoint}"
 SR_ACCT_ID="${confluent_service_account.env-manager.id}"
 SR_KEY="${confluent_api_key.env-manager-schema-registry-api-key.id}"
@@ -76,8 +45,27 @@ ADMIN_ACCT_ID="${confluent_service_account.app-manager.id}"
 ADMIN_KEY="${confluent_api_key.app-manager-kafka-api-key.id}"
 ADMIN_SECRET="${confluent_api_key.app-manager-kafka-api-key.secret}"
 
+CONNECTOR_ACCT_ID="${confluent_service_account.app-connector.id}"
+CONNECTOR_KEY="${confluent_api_key.app-connector-kafka-api-key.id}"
+CONNECTOR_SECRET="${confluent_api_key.app-connector-kafka-api-key.secret}"
+DATAGEN_CONNECTOR_ID="${confluent_connector.source.id}"
+
 set +a
 
+EOT
+
+  sensitive=true
+}
+
+# Contents of jmx-monitoring-stacks/ccloud-prometheus-grafana/utils/env_variables.env
+output "jmx_monitor_env" {
+  value=<<-EOT
+export CCLOUD_API_KEY="${var.confluent_cloud_api_key}"
+export CCLOUD_API_SECRET="${var.confluent_cloud_api_secret}"
+export CCLOUD_KAFKA_LKC_IDS="${confluent_kafka_cluster.demo.id}"
+export CCLOUD_CONNECT_LCC_IDS="${confluent_connector.source.id}"
+export CCLOUD_KSQL_LKSQLC_IDS="${confluent_ksql_cluster.main.id}"
+export CCLOUD_SR_LSRC_IDS="${confluent_schema_registry_cluster.demo.id}"
 EOT
 
   sensitive=true

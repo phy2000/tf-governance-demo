@@ -1,8 +1,27 @@
 resource "confluent_service_account" "app-connector" {
   display_name = "app-connector"
-  description  = "Service account of S3 Sink Connector to consume from 'stocks' topic of 'inventory' Kafka cluster"
+  description  = "Service account of Datagen Connector to produce to 'stocks' topic of 'inventory' Kafka cluster"
 }
 
+resource "confluent_api_key" "app-connector-kafka-api-key" {
+  display_name = "app-connector-kafka-api-key"
+  description  = "Kafka API Key that is owned by 'app-connector' service account"
+  owner {
+    id          = confluent_service_account.app-connector.id
+    api_version = confluent_service_account.app-connector.api_version
+    kind        = confluent_service_account.app-connector.kind
+  }
+
+  managed_resource {
+    id          = confluent_kafka_cluster.demo.id
+    api_version = confluent_kafka_cluster.demo.api_version
+    kind        = confluent_kafka_cluster.demo.kind
+
+    environment {
+      id = confluent_environment.staging.id
+    }
+  }
+}
 
 resource "confluent_kafka_acl" "app-connector-describe-on-cluster" {
   kafka_cluster {

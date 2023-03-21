@@ -52,6 +52,7 @@ cp terraform.tfvars.template terraform.tfvars
 scripts/01-Terraform-apply.sh
 
 # Generate ksql-governance-demo/ksql-migrations.properties and scripts/env.vars
+# Generate scripts/env_variables.env
 scripts/02-Terraform-output.sh
 ```
 
@@ -69,6 +70,12 @@ ksql-migrations -c ksql-governance-demo/ksql-migrations.properties apply -v 1
 scripts/runconsumer.sh under_100
 scripts/runconsumer.sh buy
 scripts/runconsumer.sh sell
+```
+## Use jmx-monitoring-stacks to create grafana dashboard
+``` 
+git clone https://github.com/confluentinc/jmx-monitoring-stacks $DESTDIR
+cp scripts/env_variables.env $DESTDIR/ccloud-prometheus-grafana/utils/env_variables.env
+$DESTDIR/jmx-monitoring-stacks/ccloud-prometheus-grafana/start.sh
 ```
 ---
 ## Links
