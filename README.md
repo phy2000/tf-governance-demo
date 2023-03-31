@@ -59,24 +59,31 @@ scripts/02-Terraform-output.sh
 ### Initialize KSQL streams
 ``` 
 # Initialize metadata for ksql-migrations
-ksql-migrations -c ksql-governance-demo/ksql-migrations.properties initialize-metadata
-
-# Execute the query statements
-ksql-migrations -c ksql-governance-demo/ksql-migrations.properties apply -v 1
+scripts/03-ksql-migrations.sh
 ```
 ### Start consumers
 ```
-# Each command will read until ^C is pressed
-scripts/runconsumer.sh under_100
-scripts/runconsumer.sh buy
-scripts/runconsumer.sh sell
+# This starts 3 consumers in the background
+scripts/04-run-consumers.sh
 ```
 ## Use jmx-monitoring-stacks to create grafana dashboard
 ``` 
 git clone https://github.com/confluentinc/jmx-monitoring-stacks $DESTDIR
-cp scripts/env_variables.env $DESTDIR/ccloud-prometheus-grafana/utils/env_variables.env
-$DESTDIR/ccloud-prometheus-grafana/start.sh
+# This script will copy the cloud environment variables and start
+# an instance of grafana
+# Follow the directions at the end:
+scripts/05-run-monitoring-demo.sh $DESTDIR
 ```
+
+## End the demos
+``` 
+# runs terraform destroy and stop.sh to end both demos
+scripts/99-end-demo.sh
+```
+---
+## TODO
+- Reuse an existing environment
+- REST scripts for setting data catalog example properties and tags
 ---
 ## Links
 
