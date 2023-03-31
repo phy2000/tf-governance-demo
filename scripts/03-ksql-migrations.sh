@@ -5,7 +5,7 @@ LOGDIR=$BASEDIR/logs
 mkdir -p $LOGDIR
 #NOW=$(date '+%Y-%m-%d:%H%M%S')
 
-echo Initialize ksql migrations:
+echo Initialize ksql migrations metadata:
 ksql-migrations -c $BASEDIR/ksql-governance-demo/ksql-migrations.properties initialize-metadata
 
 echo -n waiting 5 seconds for topics...
