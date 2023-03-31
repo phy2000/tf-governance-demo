@@ -1,6 +1,9 @@
 #!/bin/bash
 SCRIPTDIR=$(dirname $0)
 source $SCRIPTDIR/env.vars
+BASEDIR=$SCRIPTDIR/..
+LOGDIR=$BASEDIR/logs
+PIDS=$SCRIPTDIR/run
 
 USAGE="USAGE: $0 { buy|sell|under_100 } "
 STOCK_TYPE=$1

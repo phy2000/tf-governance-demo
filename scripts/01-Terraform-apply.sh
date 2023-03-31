@@ -15,6 +15,7 @@ fi
 echo "Output will be saved to $OUTFILE"
 sleep 2
 echo $NOW > $OUTFILE
+confluent login
 terraform apply -no-color 2>&1 | tee -a $OUTFILE
 SUCCESS=$?
 

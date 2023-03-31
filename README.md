@@ -69,16 +69,22 @@ scripts/03-ksql-migrations.sh
 ```
 # This starts 3 consumers in the background
 scripts/04-run-consumers.sh
+# To view the output:
+tail -f logs/under_100.out logs/buy.out logs/sell.out
 ```
 ## Use jmx-monitoring-stacks to create grafana dashboard
 ``` 
 git clone https://github.com/confluentinc/jmx-monitoring-stacks $DESTDIR
 # This script will copy the cloud environment variables and start
 # an instance of grafana
-# Follow the directions at the end:
-scripts/05-run-monitoring-demo.sh $DESTDIR
+# This will prompt for a location of jmx-monitoring-stacks if it's not on the command line:
+scripts/05-run-monitoring-demo.sh [ $DESTDIR ]
 ```
+## (Optional) - Stop the consumers
+``` 
+scripts/98-stopconsumers.sh
 
+```
 ## End the demos
 ``` 
 # runs terraform destroy and stop.sh to end both demos
