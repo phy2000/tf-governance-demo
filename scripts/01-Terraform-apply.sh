@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 SCRIPTDIR=$(dirname $0)
 BASEDIR=$SCRIPTDIR/..
 LOGDIR=$BASEDIR/logs
