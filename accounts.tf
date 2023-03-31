@@ -150,6 +150,9 @@ resource "confluent_role_binding" "env-manager-environment-admin" {
   principal   = "User:${confluent_service_account.env-manager.id}"
   role_name   = "EnvironmentAdmin"
   crn_pattern = confluent_environment.staging.resource_name
+  depends_on = [
+    confluent_service_account.env-manager
+  ]
 }
 
 resource "confluent_api_key" "env-manager-schema-registry-api-key" {
