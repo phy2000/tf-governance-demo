@@ -17,7 +17,7 @@ echo "Output will be saved to $OUTFILE"
 sleep 2
 echo $NOW > $OUTFILE
 
-if [ $SUCCESS -ne 0 ]; then
+if [ $SUCCESS -neq 0 ]; then
   echo "Terraform Failed - exiting..."
   exit $SUCCESS
 fi

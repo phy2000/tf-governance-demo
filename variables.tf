@@ -15,23 +15,43 @@ variable "output_topic" {
   sensitive = false
 }
 
-variable "target_cloud" {
+variable "cluster_cloud" {
   description = "Cloud to be hosted (GCP)"
   type = string
   default = "GCP"
   sensitive = false
 }
 
-variable "target_region" {
+variable "cluster_region" {
   description = "Hosting region (us-central1)"
   type = string
   default = "us-central1"
   sensitive = false
 }
 
-variable schema_package {
-  description = "governance package (ESSENTIALS)"
-  default = "ESSENTIALS"
+# Required:
+variable "schema_package" {
+  description = "governance package (Match the imported SR package or upgrade to ADVANCED)"
+  type = string
+  sensitive = false
+}
+
+# Required:
+variable "schema_region" {
+  description = "Region for schema registry"
+  type = string
+  sensitive = false
+}
+
+# Required:
+variable "schema_cloud" {
+  description = "Which cloud for schema registry"
+  type = string
+  sensitive = false
+}
+
+variable "env_display_name" {
+  description = "Match the display name of the imported environment"
   type = string
   sensitive = false
 }

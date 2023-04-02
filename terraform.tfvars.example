@@ -2,5 +2,8 @@ confluent_cloud_api_key="cloud-api-key"
 confluent_cloud_api_secret="cloud-api-secret"
 output_topic = "stocks"
 schema_package = "ADVANCED"
+schema_region = "us-central1"
+schema_cloud = "GCP"
+env_display_name = "sandbox"
 
 

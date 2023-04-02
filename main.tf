@@ -13,15 +13,16 @@ provider "confluent" {
 }
 
 resource "confluent_environment" "staging" {
-  display_name = "Staging"
+  display_name = var.env_display_name
+  lifecycle { prevent_destroy = true}
 }
 
 # Stream Governance and Kafka clusters can be in different regions as well as different cloud providers,
 # but you should to place both in the same cloud and region to restrict the fault isolation boundary.
 data "confluent_schema_registry_region" "demo" {
-  cloud        = "GCP"
-  region       = "us-central1"
-  package = var.schema_package
+  cloud        = var.schema_cloud
+  region       = var.schema_region
+  package      = var.schema_package
 }
 
 resource "confluent_schema_registry_cluster" "demo" {
@@ -35,6 +36,7 @@ resource "confluent_schema_registry_cluster" "demo" {
     # See https://docs.confluent.io/cloud/current/stream-governance/packages.html#stream-governance-regions
     id = data.confluent_schema_registry_region.demo.id
   }
+  lifecycle { prevent_destroy = true }
 }
 
 # Update the config to use a cloud provider and region of your choice.
@@ -43,7 +45,7 @@ resource "confluent_kafka_cluster" "demo" {
   display_name = "inventory"
   availability = "SINGLE_ZONE"
   cloud        = "GCP"
-  region       = "us-central1"
+  region       = var.cluster_region
   standard {}
   environment {
     id = confluent_environment.staging.id
