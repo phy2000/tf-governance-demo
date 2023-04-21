@@ -2,14 +2,17 @@
 SCRIPTDIR=$(dirname $0)
 BASEDIR=$SCRIPTDIR/..
 LOGDIR=$BASEDIR/logs
+RUNDIR=$SCRIPTDIR/run
 mkdir -p $LOGDIR
 #NOW=$(date '+%Y-%m-%d:%H%M%S')
 
 if [ $# -ge 1 ]; then
   DESTDIR=$1
 else
-  echo -n "Enter path to jmx-monitoring-stacks: "
-  read DESTDIR
+  if ! read -t 15 -e -p "Enter path to jmx-monitoring-stacks: " DESTDIR; then
+    echo Timed out - exiting...
+    exit 1
+  fi
 fi
 
 if [ ! -d $DESTDIR/ccloud-prometheus-grafana/utils/ ]; then
@@ -18,5 +21,7 @@ if [ ! -d $DESTDIR/ccloud-prometheus-grafana/utils/ ]; then
   exit -1
 fi
 
+DESTDIR=$(cd $DESTDIR && pwd)
+echo $DESTDIR > $RUNDIR/jmx-monitor-path.txt
 cp $SCRIPTDIR/env_variables.env $DESTDIR/ccloud-prometheus-grafana/utils
 $DESTDIR/ccloud-prometheus-grafana/start.sh

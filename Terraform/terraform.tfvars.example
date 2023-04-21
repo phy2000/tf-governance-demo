@@ -1,0 +1,9 @@
+confluent_cloud_api_key="cloud-api-key"
+confluent_cloud_api_secret="cloud-api-secret"
+schema_id = "lsrc-xxxx"
+env_id = "env-xxxx"
+# source_topic = "stocks"
+# cluster_cloud = "GCP"
+# cluster_region = "us-central1"
+# cluster_name = "Stocks"
+

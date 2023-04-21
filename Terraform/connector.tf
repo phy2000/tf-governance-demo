@@ -13,19 +13,19 @@ resource "confluent_api_key" "app-connector-kafka-api-key" {
   }
 
   managed_resource {
-    id          = confluent_kafka_cluster.demo.id
-    api_version = confluent_kafka_cluster.demo.api_version
-    kind        = confluent_kafka_cluster.demo.kind
+    id          = confluent_kafka_cluster.demo-cluster.id
+    api_version = confluent_kafka_cluster.demo-cluster.api_version
+    kind        = confluent_kafka_cluster.demo-cluster.kind
 
     environment {
-      id = confluent_environment.staging.id
+      id = data.confluent_environment.demo-env.id
     }
   }
 }
 
 resource "confluent_kafka_acl" "app-connector-describe-on-cluster" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "CLUSTER"
   resource_name = "kafka-cluster"
@@ -34,7 +34,7 @@ resource "confluent_kafka_acl" "app-connector-describe-on-cluster" {
   host          = "*"
   operation     = "DESCRIBE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -43,7 +43,7 @@ resource "confluent_kafka_acl" "app-connector-describe-on-cluster" {
 
 resource "confluent_kafka_acl" "app-connector-write-on-target-topic" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "TOPIC"
   resource_name = confluent_kafka_topic.stocks.topic_name
@@ -52,7 +52,7 @@ resource "confluent_kafka_acl" "app-connector-write-on-target-topic" {
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -61,7 +61,7 @@ resource "confluent_kafka_acl" "app-connector-write-on-target-topic" {
 
 resource "confluent_kafka_acl" "app-connector-create-on-data-preview-topics" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "TOPIC"
   resource_name = "data-preview"
@@ -70,7 +70,7 @@ resource "confluent_kafka_acl" "app-connector-create-on-data-preview-topics" {
   host          = "*"
   operation     = "CREATE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -79,7 +79,7 @@ resource "confluent_kafka_acl" "app-connector-create-on-data-preview-topics" {
 
 resource "confluent_kafka_acl" "app-connector-write-on-data-preview-topics" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "TOPIC"
   resource_name = "data-preview"
@@ -88,7 +88,7 @@ resource "confluent_kafka_acl" "app-connector-write-on-data-preview-topics" {
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -97,10 +97,10 @@ resource "confluent_kafka_acl" "app-connector-write-on-data-preview-topics" {
 
 resource "confluent_connector" "source" {
   environment {
-    id = confluent_environment.staging.id
+    id = data.confluent_environment.demo-env.id
   }
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
 
   // Block for custom *sensitive* configuration properties that are labelled with "Type: password" under "Configuration Properties" section in the docs:

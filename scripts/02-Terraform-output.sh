@@ -3,6 +3,9 @@
 SCRIPTDIR=$(dirname $0)
 BASEDIR=$SCRIPTDIR/..
 LOGDIR=$BASEDIR/logs
+TFDIR=$BASEDIR/Terraform
+RUNDIR=$SCRIPTDIR/run
+
 mkdir -p $LOGDIR
 NOW=$(date '+%Y-%m-%d:%H%M%S')
 
@@ -14,7 +17,7 @@ if [ -s $OUTFILE ]; then
 fi
 
 echo "# Created at $NOW" > $OUTFILE
-terraform output -raw ksql-properties >> $OUTFILE
+terraform -chdir=$TFDIR output -raw ksql-properties >> $OUTFILE
 SUCCESS=$?
 if [ $SUCCESS -ne 0 ]; then
   echo "Create of $OUTFILE failed - exiting..."
@@ -30,7 +33,7 @@ if [ -s $OUTFILE ]; then
 fi
 
 echo "# Created at $NOW" > $OUTFILE
-terraform output -raw tf-env >> $OUTFILE
+terraform -chdir=$TFDIR output -raw tf-env >> $OUTFILE
 SUCCESS=$?
 if [ $SUCCESS -ne 0 ]; then
   echo "Create of $OUTFILE failed - exiting..."
@@ -44,9 +47,10 @@ echo Creating $OUTFILE
 if [ -s $OUTFILE ]; then
   mv $OUTFILE $OUTFILE.$NOW
 fi
+echo -n "" > $RUNDIR/jmx-monitor-path.txt
 
 echo "# Created at $NOW" > $OUTFILE
-terraform output -raw jmx_monitor_env >> $OUTFILE
+terraform -chdir=$TFDIR output -raw jmx_monitor_env >> $OUTFILE
 SUCCESS=$?
 if [ $SUCCESS -ne 0 ]; then
   echo "Create of $OUTFILE failed - exiting..."

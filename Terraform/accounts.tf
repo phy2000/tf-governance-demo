@@ -7,7 +7,7 @@ resource "confluent_service_account" "app-manager" {
 resource "confluent_role_binding" "app-manager-kafka-cluster-admin" {
   principal   = "User:${confluent_service_account.app-manager.id}"
   role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.demo.rbac_crn
+  crn_pattern = confluent_kafka_cluster.demo-cluster.rbac_crn
 }
 
 resource "confluent_api_key" "app-manager-kafka-api-key" {
@@ -20,12 +20,12 @@ resource "confluent_api_key" "app-manager-kafka-api-key" {
   }
 
   managed_resource {
-    id          = confluent_kafka_cluster.demo.id
-    api_version = confluent_kafka_cluster.demo.api_version
-    kind        = confluent_kafka_cluster.demo.kind
+    id          = confluent_kafka_cluster.demo-cluster.id
+    api_version = confluent_kafka_cluster.demo-cluster.api_version
+    kind        = confluent_kafka_cluster.demo-cluster.kind
 
     environment {
-      id = confluent_environment.staging.id
+      id = data.confluent_environment.demo-env.id
     }
   }
   depends_on = [
@@ -49,28 +49,28 @@ resource "confluent_api_key" "app-producer-kafka-api-key" {
   }
 
   managed_resource {
-    id          = confluent_kafka_cluster.demo.id
-    api_version = confluent_kafka_cluster.demo.api_version
-    kind        = confluent_kafka_cluster.demo.kind
+    id          = confluent_kafka_cluster.demo-cluster.id
+    api_version = confluent_kafka_cluster.demo-cluster.api_version
+    kind        = confluent_kafka_cluster.demo-cluster.kind
 
     environment {
-      id = confluent_environment.staging.id
+      id = data.confluent_environment.demo-env.id
     }
   }
 }
 
 resource "confluent_kafka_acl" "app-producer-write-on-topic" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "TOPIC"
   resource_name = confluent_kafka_topic.stocks.topic_name
-  pattern_type  = "LITERAL"
+  pattern_type  = "PREFIXED"
   principal     = "User:${confluent_service_account.app-producer.id}"
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -93,19 +93,19 @@ resource "confluent_api_key" "app-consumer-kafka-api-key" {
   }
 
   managed_resource {
-    id          = confluent_kafka_cluster.demo.id
-    api_version = confluent_kafka_cluster.demo.api_version
-    kind        = confluent_kafka_cluster.demo.kind
+    id          = confluent_kafka_cluster.demo-cluster.id
+    api_version = confluent_kafka_cluster.demo-cluster.api_version
+    kind        = confluent_kafka_cluster.demo-cluster.kind
 
     environment {
-      id = confluent_environment.staging.id
+      id = data.confluent_environment.demo-env.id
     }
   }
 }
 
 resource "confluent_kafka_acl" "app-consumer-read-on-topic" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "TOPIC"
   resource_name = "stocks"
@@ -114,7 +114,7 @@ resource "confluent_kafka_acl" "app-consumer-read-on-topic" {
   host          = "*"
   operation     = "READ"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -123,7 +123,7 @@ resource "confluent_kafka_acl" "app-consumer-read-on-topic" {
 
 resource "confluent_kafka_acl" "app-consumer-read-on-group" {
   kafka_cluster {
-    id = confluent_kafka_cluster.demo.id
+    id = confluent_kafka_cluster.demo-cluster.id
   }
   resource_type = "GROUP"
 
@@ -133,7 +133,7 @@ resource "confluent_kafka_acl" "app-consumer-read-on-group" {
   host          = "*"
   operation     = "READ"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.demo.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.demo-cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.app-manager-kafka-api-key.id
     secret = confluent_api_key.app-manager-kafka-api-key.secret
@@ -149,7 +149,7 @@ resource "confluent_service_account" "env-manager" {
 resource "confluent_role_binding" "env-manager-environment-admin" {
   principal   = "User:${confluent_service_account.env-manager.id}"
   role_name   = "EnvironmentAdmin"
-  crn_pattern = confluent_environment.staging.resource_name
+  crn_pattern = data.confluent_environment.demo-env.resource_name
   depends_on = [
     confluent_service_account.env-manager
   ]
@@ -165,12 +165,12 @@ resource "confluent_api_key" "env-manager-schema-registry-api-key" {
   }
 
   managed_resource {
-    id          = confluent_schema_registry_cluster.demo.id
-    api_version = confluent_schema_registry_cluster.demo.api_version
-    kind        = confluent_schema_registry_cluster.demo.kind
+    id          = data.confluent_schema_registry_cluster.demo-schema.id
+    api_version = data.confluent_schema_registry_cluster.demo-schema.api_version
+    kind        = data.confluent_schema_registry_cluster.demo-schema.kind
 
     environment {
-      id = confluent_environment.staging.id
+      id = data.confluent_environment.demo-env.id
     }
   }
 
