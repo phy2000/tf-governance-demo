@@ -23,6 +23,12 @@ CONSUMER_OPTS="      $TOPIC_NAME \
                      --print-key \
                      "
 
+if ! confluent env list > /dev/null 2>&1 ; then
+  echo $USAGE
+  echo -e "\nRun confluent login before continuing\nExiting..." >&2
+  exit 1
+fi
+
 case $STOCK_TYPE in
   under_100 | buy | sell | table_topic)
     CMD="confluent kafka topic consume $CONSUMER_OPTS"

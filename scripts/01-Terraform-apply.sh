@@ -20,7 +20,7 @@ fi
 echo "Output will be saved to $OUTFILE"
 sleep 2
 echo $NOW > $OUTFILE
-confluent login --prompt
+
 (terraform -chdir=$TFDIR apply -no-color $TF_OPTIONS; echo $? > $RUNDIR/apply.status) 2>&1 | tee -a $OUTFILE
 SUCCESS=$(< $RUNDIR/apply.status)
 

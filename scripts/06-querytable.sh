@@ -5,8 +5,12 @@ BASEDIR=$SCRIPTDIR/..
 LOGDIR=$BASEDIR/logs
 PIDS=$SCRIPTDIR/run
 
+if ! confluent env list > /dev/null 2>&1 ; then
+  echo -e "Run confluent login before continuing\nExiting..." >&2
+  exit 1
+fi
+
 TOPIC_NAME=stocks_table_topic
-confluent login --prompt
 
 confluent kafka topic create \
     --if-not-exists \
