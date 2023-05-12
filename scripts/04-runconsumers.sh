@@ -9,7 +9,11 @@ mkdir -p $LOGDIR
 mkdir -p $PIDS
 
 # Make sure the CLI is logged in, else the timing gets whack
-confluent login
+if ! confluent env list > /dev/null 2>&1 ; then
+  echo -e "Run confluent login before continuing\nExiting..." >&2
+  exit 1
+fi
+
 echo Running Topic Consumers
 echo Consume from under_100 topic
 sleep 1
